@@ -1,6 +1,6 @@
-import * as dotenv from 'dotenv';
+import * as dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 
 export const development = {
   url: process.env.DEV_DATABASE_URL,

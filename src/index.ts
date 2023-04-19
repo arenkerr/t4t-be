@@ -1,9 +1,9 @@
-import * as dotenv from 'dotenv'
+// import * as dotenv from 'dotenv'
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone'
-import * as db from './db.js';
+import * as db from './database/models/sequelize.js';
 
-dotenv.config()
+// dotenv.config()
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -45,6 +45,7 @@ const resolvers = {
 };
 
 db.connect();
+db.associate();
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
