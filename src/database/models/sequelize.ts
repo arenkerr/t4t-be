@@ -1,13 +1,15 @@
 /* eslint-disable no-console */
 import { Sequelize } from 'sequelize';
+import {SequelizeStorage, Umzug} from 'umzug';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import * as config from '../config.js';
+import umzug from '../migrations/umzug.js'
+import * as config from './config.js';
 
 const production = process.env.NODE_ENV === 'production';
 const url = production ? config.production.url : config.development.url;
-const sequelize = new Sequelize(url);
+const sequelize = new Sequelize(url || '');
 
 const connect = () => {
     try {
@@ -41,4 +43,6 @@ const associate = () => {
     });
   };
 
-export { sequelize, connect, associate };
+const migrate = umzug(sequelize);
+
+export { sequelize, connect, associate, migrate };

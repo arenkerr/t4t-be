@@ -1,13 +1,13 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
 
 class User extends Model {
-    public id: string;
-    public username: string;
-    public password: string;
-    public email: string;
-    public createdAt: Date;
-    public updatedAt: Date;
-    public deletedAt: Date;  
+    public id!: string;
+    public username!: string;
+    public password!: string;
+    public email!: string;
+    public createdAt!: Date;
+    public updatedAt!: Date;
+    public deletedAt!: Date;  
 }
 
 const initModel = (sequelize: Sequelize) => {
