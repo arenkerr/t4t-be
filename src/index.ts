@@ -1,9 +1,6 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone'
 import * as db from './database/models/sequelize.js';
-import { Umzug, SequelizeStorage } from 'umzug';
-import { Sequelize } from 'sequelize';
-// import up from './database/migrations/users.js'
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -44,28 +41,11 @@ const resolvers = {
   },
 };
 
-// const migrate = (sequelize: Sequelize) => {
-//   new Umzug({
-//     migrations: {
-//       glob: '/database/migrations/*.js',
-//     },
-//     context: db.sequelize.getQueryInterface(),
-//     storage: new SequelizeStorage({ sequelize }),
-//     logger: console
-//   });
-// }
-
 const database = async () => {
   try {
-    // if (config.nodeEnv !== 'development') {
-    //   const pathToMigration = path.join(__dirname, 'migrations');
-    //   await migrate(sequelize, pathToMigration).up().catch((error) => logger.error('Migrate error', error));
-    // }
-
     const { connect, migrate, associate } = db;
     connect();
     migrate.up();
-    console.log(migrate.migrations.toString())
     associate();
   } catch (error) {
     // eslint-disable-next-line no-console

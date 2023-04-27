@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize';
-import {MigrationParams, SequelizeStorage, Umzug} from 'umzug';
+import {SequelizeStorage, Umzug} from 'umzug';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -10,8 +10,6 @@ const umzug = (sequelize: Sequelize) => new Umzug({
     migrations: {
       glob: ['*.{js,cjs,mjs}', { cwd: __dirname, ignore: 'umzug.js'}],
       resolve: (params) => {
-        console.log('===> here')
-
         if (params.path) {
             if (params.path.endsWith('.mjs') || params.path.endsWith('.js')) {
                 const getModule = () => import(`file:///${params.path && params.path.replace(/\\/g, '/')}`)
@@ -22,7 +20,6 @@ const umzug = (sequelize: Sequelize) => new Umzug({
                     down: async downParams => (await getModule()).down(downParams),
                 }
             }
-
         }
         const getDefaultModule = async () => await import(params.path || '')
   
@@ -41,4 +38,4 @@ const umzug = (sequelize: Sequelize) => new Umzug({
 
 
 export default umzug;
-export type Migration = any;
+export type Migration = unknown;

@@ -5,6 +5,8 @@ class User extends Model {
     public username!: string;
     public password!: string;
     public email!: string;
+    public bio!: string;
+    public avatarUrl!: string;
     public createdAt!: Date;
     public updatedAt!: Date;
     public deletedAt!: Date;  
@@ -29,10 +31,19 @@ const initModel = (sequelize: Sequelize) => {
             type: DataTypes.STRING(100),
             allowNull: false
         },
+        bio: {
+			type: DataTypes.TEXT({ length: 'medium' }),
+			allowNull: true,
+		},
+		avatarUrl: {
+			type: DataTypes.STRING,
+			allowNull: true,
+		},
     },
     {
         sequelize,
         tableName: 'user',
+        paranoid: true
     }
     );
     return User;
