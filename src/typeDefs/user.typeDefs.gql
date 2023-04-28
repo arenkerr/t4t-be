@@ -1,0 +1,11 @@
+scalar Date
+
+type User {
+  id: ID!
+  username: String!
+  password: String!
+  email: String!
+  bio: String
+  avatarUrl: String
+  createdAt: Date!
+}

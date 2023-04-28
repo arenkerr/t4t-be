@@ -1,0 +1,5 @@
+# import User from 'user.typeDefs.gql'
+
+type Query {
+  users: [User]
+}

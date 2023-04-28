@@ -42,7 +42,7 @@ const initModel = (sequelize: Sequelize) => {
     },
     {
         sequelize,
-        tableName: 'user',
+        tableName: 'users',
         paranoid: true
     }
     );
