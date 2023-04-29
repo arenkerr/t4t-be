@@ -12,6 +12,7 @@ class UserService {
     // }
 
 //     createUser({ username, password, email }: CreateUserMutationArgs): Promise<User> {
+//         // bcrypt
 //     return sequelize.transaction((transaction) => UserModel.create({
 //         username,
 //         password,
