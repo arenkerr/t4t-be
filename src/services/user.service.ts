@@ -8,16 +8,20 @@ class UserService {
         return UserModel.findAll();
     }
 
-    static async createUser({ username, password, email, bio, avatarUrl }: MutationCreateUserArgs): Promise<User> {
-        const hash = await bcrypt.hash(password, 10);
+    static async createUser({ username, password, email, bio, avatarUrl }: MutationCreateUserArgs): Promise<User | undefined> {
+        try {
+            const hash = await bcrypt.hash(password, 10);
     
-        return sequelize.transaction((transaction) => UserModel.create({
-            username,
-            password: hash,
-            email,
-            bio,
-            avatarUrl
-        }, { transaction }));
+            return sequelize.transaction((transaction) => UserModel.create({
+                username,
+                password: hash,
+                email,
+                bio,
+                avatarUrl
+            }, { transaction }));
+        } catch(err) {
+            console.error(`Error creating user: ${err}`)
+        }
   }
 }
 

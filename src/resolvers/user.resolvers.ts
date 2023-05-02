@@ -6,7 +6,7 @@ const userResolvers: Resolvers = {
         users: (): Promise<User[]> => UserService.getUsers()
     },
     Mutation: {
-        createUser: (_, args: MutationCreateUserArgs): Promise<User> => UserService.createUser(args)
+        createUser: (_, args: MutationCreateUserArgs): Promise<User | undefined> => UserService.createUser(args)
     }
 }
 

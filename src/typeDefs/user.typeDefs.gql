@@ -9,11 +9,3 @@ type User {
   avatarUrl: String
   createdAt: Date!
 }
-
-type CreateUserInput {
-  username: String!
-  password: String!
-  email: String!
-  bio: String
-  avatarUrl: String
-}
