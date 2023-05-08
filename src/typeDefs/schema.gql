@@ -12,4 +12,5 @@ type Mutation {
     bio: String
     avatarUrl: String
   ): User
+  login(username: String!, password: String!): String
 }

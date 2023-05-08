@@ -1,4 +1,4 @@
-import { MutationCreateUserArgs, Resolvers, User } from "../types/graphql.js"
+import { MutationCreateUserArgs, MutationLoginArgs, Resolvers, User } from "../types/graphql.js"
 import UserService from "../services/user.service.js"
 
 const userResolvers: Resolvers = {
@@ -6,7 +6,8 @@ const userResolvers: Resolvers = {
         users: (): Promise<User[] | undefined> => UserService.getUsers()
     },
     Mutation: {
-        createUser: (_, args: MutationCreateUserArgs): Promise<User | undefined> => UserService.createUser(args)
+        createUser: (_, args: MutationCreateUserArgs): Promise<User | undefined> => UserService.createUser(args),
+        login: (_, args: MutationLoginArgs): Promise<string | undefined> => UserService.login(args)
     }
 }
 
