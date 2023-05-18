@@ -1,4 +1,6 @@
 # import User from 'user.typeDefs.gql'
+# import CreateUserResult from 'user.typeDefs.gql'
+# import LoginResult from 'user.typeDefs.gql'
 
 type Query {
   users: [User]
@@ -11,6 +13,6 @@ type Mutation {
     email: String!
     bio: String
     avatarUrl: String
-  ): User
-  login(username: String!, password: String!): String
+  ): CreateUserResult!
+  login(username: String!, password: String!): LoginResult!
 }

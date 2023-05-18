@@ -1,3 +1,6 @@
+# import BaseError from 'error.typeDefs.gql'
+# import UnknownError from 'error.typeDefs.gql'
+
 scalar Date
 
 type User {
@@ -9,3 +12,24 @@ type User {
   avatarUrl: String
   createdAt: Date!
 }
+
+# TODO: validate user result
+type UsernameExistsError implements BaseError {
+  message: String!
+}
+
+type DuplicateEmailError implements BaseError {
+  message: String!
+}
+
+union CreateUserResult = User | UnknownError
+
+type LoginToken {
+  token: String!
+}
+
+type InvalidCredentialsError implements BaseError {
+  message: String!
+}
+
+union LoginResult = LoginToken | UnknownError | InvalidCredentialsError

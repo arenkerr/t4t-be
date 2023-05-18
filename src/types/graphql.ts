@@ -15,10 +15,33 @@ export type Scalars = {
   Date: any;
 };
 
+export type BaseError = {
+  message: Scalars['String'];
+};
+
+export type CreateUserResult = UnknownError | User;
+
+export type InvalidCredentialsError = BaseError & {
+  __typename?: 'InvalidCredentialsError';
+  message: Scalars['String'];
+};
+
+export type InvalidInputError = BaseError & {
+  __typename?: 'InvalidInputError';
+  message: Scalars['String'];
+};
+
+export type LoginResult = InvalidCredentialsError | LoginToken | UnknownError;
+
+export type LoginToken = {
+  __typename?: 'LoginToken';
+  token: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  createUser?: Maybe<User>;
-  login?: Maybe<Scalars['String']>;
+  createUser: CreateUserResult;
+  login: LoginResult;
 };
 
 
@@ -36,9 +59,24 @@ export type MutationLoginArgs = {
   username: Scalars['String'];
 };
 
+export type NotAllowedError = BaseError & {
+  __typename?: 'NotAllowedError';
+  message: Scalars['String'];
+};
+
+export type NotFoundError = BaseError & {
+  __typename?: 'NotFoundError';
+  message: Scalars['String'];
+};
+
 export type Query = {
   __typename?: 'Query';
   users?: Maybe<Array<Maybe<User>>>;
+};
+
+export type UnknownError = BaseError & {
+  __typename?: 'UnknownError';
+  message: Scalars['String'];
 };
 
 export type User = {
@@ -119,41 +157,112 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
+/** Mapping of union types */
+export type ResolversUnionTypes = {
+  CreateUserResult: ( UnknownError ) | ( User );
+  LoginResult: ( InvalidCredentialsError ) | ( LoginToken ) | ( UnknownError );
+};
 
+/** Mapping of union parent types */
+export type ResolversUnionParentTypes = {
+  CreateUserResult: ( UnknownError ) | ( User );
+  LoginResult: ( InvalidCredentialsError ) | ( LoginToken ) | ( UnknownError );
+};
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  BaseError: ResolversTypes['InvalidCredentialsError'] | ResolversTypes['InvalidInputError'] | ResolversTypes['NotAllowedError'] | ResolversTypes['NotFoundError'] | ResolversTypes['UnknownError'];
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  CreateUserResult: ResolverTypeWrapper<ResolversUnionTypes['CreateUserResult']>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  InvalidCredentialsError: ResolverTypeWrapper<InvalidCredentialsError>;
+  InvalidInputError: ResolverTypeWrapper<InvalidInputError>;
+  LoginResult: ResolverTypeWrapper<ResolversUnionTypes['LoginResult']>;
+  LoginToken: ResolverTypeWrapper<LoginToken>;
   Mutation: ResolverTypeWrapper<{}>;
+  NotAllowedError: ResolverTypeWrapper<NotAllowedError>;
+  NotFoundError: ResolverTypeWrapper<NotFoundError>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
+  UnknownError: ResolverTypeWrapper<UnknownError>;
   User: ResolverTypeWrapper<User>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  BaseError: ResolversParentTypes['InvalidCredentialsError'] | ResolversParentTypes['InvalidInputError'] | ResolversParentTypes['NotAllowedError'] | ResolversParentTypes['NotFoundError'] | ResolversParentTypes['UnknownError'];
   Boolean: Scalars['Boolean'];
+  CreateUserResult: ResolversUnionParentTypes['CreateUserResult'];
   Date: Scalars['Date'];
   ID: Scalars['ID'];
+  InvalidCredentialsError: InvalidCredentialsError;
+  InvalidInputError: InvalidInputError;
+  LoginResult: ResolversUnionParentTypes['LoginResult'];
+  LoginToken: LoginToken;
   Mutation: {};
+  NotAllowedError: NotAllowedError;
+  NotFoundError: NotFoundError;
   Query: {};
   String: Scalars['String'];
+  UnknownError: UnknownError;
   User: User;
+};
+
+export type BaseErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['BaseError'] = ResolversParentTypes['BaseError']> = {
+  __resolveType: TypeResolveFn<'InvalidCredentialsError' | 'InvalidInputError' | 'NotAllowedError' | 'NotFoundError' | 'UnknownError', ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+};
+
+export type CreateUserResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateUserResult'] = ResolversParentTypes['CreateUserResult']> = {
+  __resolveType: TypeResolveFn<'UnknownError' | 'User', ParentType, ContextType>;
 };
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
   name: 'Date';
 }
 
+export type InvalidCredentialsErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['InvalidCredentialsError'] = ResolversParentTypes['InvalidCredentialsError']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type InvalidInputErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['InvalidInputError'] = ResolversParentTypes['InvalidInputError']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type LoginResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginResult'] = ResolversParentTypes['LoginResult']> = {
+  __resolveType: TypeResolveFn<'InvalidCredentialsError' | 'LoginToken' | 'UnknownError', ParentType, ContextType>;
+};
+
+export type LoginTokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginToken'] = ResolversParentTypes['LoginToken']> = {
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'email' | 'password' | 'username'>>;
-  login?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
+  createUser?: Resolver<ResolversTypes['CreateUserResult'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'email' | 'password' | 'username'>>;
+  login?: Resolver<ResolversTypes['LoginResult'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
+};
+
+export type NotAllowedErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['NotAllowedError'] = ResolversParentTypes['NotAllowedError']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type NotFoundErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['NotFoundError'] = ResolversParentTypes['NotFoundError']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+};
+
+export type UnknownErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['UnknownError'] = ResolversParentTypes['UnknownError']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
@@ -168,9 +277,18 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 };
 
 export type Resolvers<ContextType = any> = {
+  BaseError?: BaseErrorResolvers<ContextType>;
+  CreateUserResult?: CreateUserResultResolvers<ContextType>;
   Date?: GraphQLScalarType;
+  InvalidCredentialsError?: InvalidCredentialsErrorResolvers<ContextType>;
+  InvalidInputError?: InvalidInputErrorResolvers<ContextType>;
+  LoginResult?: LoginResultResolvers<ContextType>;
+  LoginToken?: LoginTokenResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  NotAllowedError?: NotAllowedErrorResolvers<ContextType>;
+  NotFoundError?: NotFoundErrorResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  UnknownError?: UnknownErrorResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
 

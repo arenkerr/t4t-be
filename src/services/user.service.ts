@@ -2,58 +2,108 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { sequelize } from '../database/models/sequelize.js';
 import UserModel from '../database/models/user.model.js';
-import { MutationCreateUserArgs, User } from '../types/graphql.js';
-import logger from '../util/logger.js';
+import {
+  CreateUserResult,
+  LoginResult,
+  MutationCreateUserArgs,
+  User,
+} from '../types/graphql.js';
+import logger from '../util/logger.util.js';
+import createError from '../util/error.util.js';
+import {
+  DUPLICATE_EMAIL_ERROR,
+  INVALID_CREDENTIALS_ERROR,
+  UNKNOWN_ERROR,
+  USERNAME_EXISTS_ERROR,
+} from '../constants/error.constants.js';
 
 class UserService {
-    static async getUsers(): Promise<User[] | undefined> {
-        try {
-            return UserModel.findAll();
-        } catch(err) {
-            logger.error(`${this.name}.${this.getUsers.name} - ${err}`)
-        }
+  static async getUsers(): Promise<User[] | undefined> {
+    try {
+      return UserModel.findAll();
+    } catch (err) {
+      logger.error(`${this.name}.${this.getUsers.name} - ${err}`);
     }
-
-    static async createUser({ username, password, email, bio, avatarUrl }: MutationCreateUserArgs): Promise<User | undefined> {
-        try {
-            const hash = await bcrypt.hash(password, 10);
-    
-            const user = await sequelize.transaction((transaction) => UserModel.create({
-                username,
-                password: hash,
-                email,
-                bio,
-                avatarUrl
-            }, { transaction }));
-
-            return user;
-        } catch(err) {
-            logger.error(`${this.name}.${this.createUser.name} - ${err}`)
-        }
   }
 
-  static async login({ username, password }: { username: string, password: string } ){
+  static async createUser({
+    username,
+    password,
+    email,
+    bio,
+    avatarUrl,
+  }: MutationCreateUserArgs): Promise<CreateUserResult> {
     try {
-        const secret = process.env.TOKEN_SECRET;
+      const hash = await bcrypt.hash(password, 10);
+      const user = await sequelize.transaction((transaction) =>
+        UserModel.create(
+          {
+            username,
+            password: hash,
+            email,
+            bio,
+            avatarUrl,
+          },
+          { transaction }
+        )
+      );
 
-        if (!secret) {
-            throw Error('No secret token')
+      // TODO: send verification email
+      return user;
+    } catch (err) {
+      logger.error(`${this.name}.${this.createUser.name} - ${err}`);
+
+      return createError(UNKNOWN_ERROR);
+    }
+  }
+
+  static async login({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }): Promise<LoginResult> {
+    try {
+      const secret = process.env.TOKEN_SECRET;
+
+      if (!secret) {
+        throw Error('No secret token');
+      }
+
+      const user = await UserModel.findOne({ where: { username } });
+
+      if (user) {
+        const match = await bcrypt.compare(password, user.password);
+
+        if (match) {
+          const accessToken = {
+            token: jwt.sign({ user: { id: user.id } }, secret),
+          };
+          return accessToken;
         }
+      }
 
-        const user = await UserModel.findOne({ where: { username } });
+      return createError(INVALID_CREDENTIALS_ERROR);
+    } catch (err) {
+      logger.error(`${this.name}.${this.login.name} - ${err}`);
 
-        if (user) {
-            const match = await bcrypt.compare(password, user.password);
+      return createError(UNKNOWN_ERROR);
+    }
+  }
 
-            if (match) {
-                const accessToken = jwt.sign({ user: { id: user.id }}, secret)
-                return accessToken;
-            } 
-        }
+  // TODO: create queries to validate username/email
+  static async validateUsername(username: string) {
+    const usernameExists = await UserModel.findOne({ where: { username } });
+    if (usernameExists) {
+      return createError(USERNAME_EXISTS_ERROR);
+    }
+  }
 
-        return 'Invalid credentials'
-    } catch(err) {
-        logger.error(`${this.name}.${this.login.name} - ${err}`)
+  static async validateEmail(email: string) {
+    const emailExists = await UserModel.findOne({ where: { email } });
+    if (emailExists) {
+      return createError(DUPLICATE_EMAIL_ERROR);
     }
   }
 }
