@@ -1,10 +1,11 @@
 import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone'
-import { loadSchema } from '@graphql-tools/load'
+import { expressMiddleware } from '@apollo/server/express4';
+import { loadSchema } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
-import { makeExecutableSchema } from '@graphql-tools/schema'
+import { makeExecutableSchema } from '@graphql-tools/schema';
 import resolvers from './resolvers/index.js';
 import * as db from './database/models/sequelize.js';
+import express, { json } from 'express';
 
 const database = async () => {
   try {
@@ -12,7 +13,6 @@ const database = async () => {
     connect();
     migrate.up();
     associate();
-
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('database error', error);
@@ -21,14 +21,27 @@ const database = async () => {
 
 database();
 
-export const schema = makeExecutableSchema({
-  typeDefs: await loadSchema('src/typeDefs/schema.gql', { loaders: [new GraphQLFileLoader()]}),
-  resolvers
+const schema = makeExecutableSchema({
+  typeDefs: await loadSchema('src/typeDefs/schema.gql', {
+    loaders: [new GraphQLFileLoader()],
+  }),
+  resolvers,
 });
 
 const server = new ApolloServer({ schema });
+const app = express();
+const port = process.env.PORT;
 
-const { url } = await startStandaloneServer(server, { listen: { port: 4000 } });
+await server.start();
 
-// eslint-disable-next-line no-console
-console.log(`🚀 Server listening at: ${url}`);
+app.use(
+  '/graphql',
+  json(),
+  expressMiddleware(server, { context: async (req) => ({ req }) })
+);
+// TODO: app.use(authenticationMiddleware)
+
+app.listen({ port }, () =>
+  // eslint-disable-next-line no-console
+  console.log(`🚀 Server listening at ${port}/${app.path}`)
+);

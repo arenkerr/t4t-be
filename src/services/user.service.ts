@@ -16,6 +16,7 @@ import {
   UNKNOWN_ERROR,
   USERNAME_EXISTS_ERROR,
 } from '../constants/error.constants.js';
+import { LOGIN_TOKEN_EXP } from '../constants/auth.constants.js';
 
 class UserService {
   static async getUsers(): Promise<User[] | undefined> {
@@ -78,7 +79,10 @@ class UserService {
 
         if (match) {
           const accessToken = {
-            token: jwt.sign({ user: { id: user.id } }, secret),
+            token: jwt.sign({ user: { id: user.id } }, secret, {
+              expiresIn: LOGIN_TOKEN_EXP,
+            }),
+            // TODO: add user role, refresh token
           };
           return accessToken;
         }

@@ -43,10 +43,10 @@
     "@apollo/utils.keyvaluecache" "^2.1.0"
     "@apollo/utils.logger" "^2.0.0"
 
-"@apollo/server@^4.6.0":
-  version "4.6.0"
-  resolved "https://registry.npmjs.org/@apollo/server/-/server-4.6.0.tgz"
-  integrity sha512-02dgZ5ywBZP7xVZ+Xf62uEtA0jCYcpD5gEluCADudUSwbGuQTnJ9F056SxOVLpJRM69sWDrOMKF5kncYYH5wSA==
+"@apollo/server@^4.7.1":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@apollo/server/-/server-4.7.1.tgz#3063fb8ca4a5a94cdf15f219811ac50c3e097b9f"
+  integrity sha512-rFxd8jsMlqEYzmhuxATaDAPoRH905R56FKP4TnZWaiDYJtjhHe3hxZOWl24V7s0dB52DIp6S/x+zjQX8fwD37w==
   dependencies:
     "@apollo/cache-control-types" "^1.0.2"
     "@apollo/server-gateway-interface" "^1.1.0"
@@ -2565,6 +2565,24 @@ body-parser@1.20.1:
 body-parser@^1.20.0:
   version "1.20.2"
   resolved "https://registry.npmjs.org/body-parser/-/body-parser-1.20.2.tgz"
+  integrity sha512-ml9pReCu3M61kGlqoTm2umSXTlRTuGTx0bfYj+uIUKKYycG5NtSbeetV3faSU6R7ajOPw0g/J1PvK4qNy7s5bA==
+  dependencies:
+    bytes "3.1.2"
+    content-type "~1.0.5"
+    debug "2.6.9"
+    depd "2.0.0"
+    destroy "1.2.0"
+    http-errors "2.0.0"
+    iconv-lite "0.4.24"
+    on-finished "2.4.1"
+    qs "6.11.0"
+    raw-body "2.5.2"
+    type-is "~1.6.18"
+    unpipe "1.0.0"
+
+body-parser@^1.20.2:
+  version "1.20.2"
+  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-1.20.2.tgz#6feb0e21c4724d06de7ff38da36dad4f57a747fd"
   integrity sha512-ml9pReCu3M61kGlqoTm2umSXTlRTuGTx0bfYj+uIUKKYycG5NtSbeetV3faSU6R7ajOPw0g/J1PvK4qNy7s5bA==
   dependencies:
     bytes "3.1.2"
