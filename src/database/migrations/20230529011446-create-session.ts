@@ -20,10 +20,6 @@ export const up: Migration = async ({
       allowNull: true,
       type: DataTypes.DATE,
     },
-    deletedAt: {
-      allowNull: true,
-      type: DataTypes.DATE,
-    },
   });
 };
 

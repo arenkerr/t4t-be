@@ -1,4 +1,5 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import Session from './session.model.js';
 
 class User extends Model {
   public id!: string;
@@ -44,6 +45,7 @@ const initModel = (sequelize: Sequelize) => {
       sessionId: {
         type: DataTypes.UUID,
         allowNull: true,
+        references: { model: 'sessions', key: 'id' },
       },
     },
     {
@@ -52,6 +54,18 @@ const initModel = (sequelize: Sequelize) => {
       paranoid: true,
     }
   );
+
+  Session.hasOne(User, {
+    foreignKey: {
+      name: 'sessionId',
+    },
+  });
+  User.belongsTo(Session, {
+    foreignKey: {
+      name: 'sessionId',
+    },
+  });
+
   return User;
 };
 

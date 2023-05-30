@@ -46,6 +46,10 @@ export const up: Migration = async ({
       allowNull: true,
       type: DataTypes.DATE,
     },
+    sessionId: {
+      allowNull: true,
+      type: DataTypes.UUID,
+    },
   });
 };
 

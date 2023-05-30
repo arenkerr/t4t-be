@@ -1,10 +1,10 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
+import User from './user.model.js';
 
 class Session extends Model {
   public id!: string;
   public createdAt!: Date;
   public updatedAt!: Date;
-  public deletedAt!: Date;
 }
 
 const initModel = (sequelize: Sequelize) => {
@@ -19,9 +19,9 @@ const initModel = (sequelize: Sequelize) => {
     {
       sequelize,
       tableName: 'sessions',
-      paranoid: true,
     }
   );
+
   return Session;
 };
 
