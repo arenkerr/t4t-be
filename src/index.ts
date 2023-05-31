@@ -3,9 +3,13 @@ import { expressMiddleware } from '@apollo/server/express4';
 import { loadSchema } from '@graphql-tools/load';
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
 import { makeExecutableSchema } from '@graphql-tools/schema';
+import express, { json } from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import resolvers from './resolvers/index.js';
 import * as db from './database/models/sequelize.js';
-import express, { json } from 'express';
+import { authMiddleware } from './auth/middleware.auth.js';
+import { config } from './util/cors.util.js';
 
 const database = async () => {
   try {
@@ -34,14 +38,16 @@ const port = process.env.PORT;
 
 await server.start();
 
+app.use(authMiddleware);
 app.use(
   '/graphql',
+  cors(config),
   json(),
-  expressMiddleware(server, { context: async (req) => ({ req }) })
+  cookieParser(),
+  expressMiddleware(server, { context: async ({ req, res }) => ({ req, res }) })
 );
-// TODO: app.use(authenticationMiddleware)
 
 app.listen({ port }, () =>
   // eslint-disable-next-line no-console
-  console.log(`🚀 Server listening at ${port}/${app.path}`)
+  console.log(`🚀 Server listening on port ${port}`)
 );
