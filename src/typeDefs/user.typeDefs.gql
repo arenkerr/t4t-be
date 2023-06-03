@@ -24,12 +24,13 @@ type DuplicateEmailError implements BaseError {
 
 union CreateUserResult = User | UnknownError
 
-type LoginToken {
-  token: String!
+type LoginTokens {
+  accessToken: String!
+  refreshToken: String!
 }
 
 type InvalidCredentialsError implements BaseError {
   message: String!
 }
 
-union LoginResult = LoginToken | UnknownError | InvalidCredentialsError
+union LoginResult = LoginTokens | UnknownError | InvalidCredentialsError

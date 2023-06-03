@@ -31,11 +31,12 @@ export type InvalidInputError = BaseError & {
   message: Scalars['String'];
 };
 
-export type LoginResult = InvalidCredentialsError | LoginToken | UnknownError;
+export type LoginResult = InvalidCredentialsError | LoginTokens | UnknownError;
 
-export type LoginToken = {
-  __typename?: 'LoginToken';
-  token: Scalars['String'];
+export type LoginTokens = {
+  __typename?: 'LoginTokens';
+  accessToken: Scalars['String'];
+  refreshToken: Scalars['String'];
 };
 
 export type Mutation = {
@@ -160,13 +161,13 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping of union types */
 export type ResolversUnionTypes = {
   CreateUserResult: ( UnknownError ) | ( User );
-  LoginResult: ( InvalidCredentialsError ) | ( LoginToken ) | ( UnknownError );
+  LoginResult: ( InvalidCredentialsError ) | ( LoginTokens ) | ( UnknownError );
 };
 
 /** Mapping of union parent types */
 export type ResolversUnionParentTypes = {
   CreateUserResult: ( UnknownError ) | ( User );
-  LoginResult: ( InvalidCredentialsError ) | ( LoginToken ) | ( UnknownError );
+  LoginResult: ( InvalidCredentialsError ) | ( LoginTokens ) | ( UnknownError );
 };
 
 /** Mapping between all available schema types and the resolvers types */
@@ -179,7 +180,7 @@ export type ResolversTypes = {
   InvalidCredentialsError: ResolverTypeWrapper<InvalidCredentialsError>;
   InvalidInputError: ResolverTypeWrapper<InvalidInputError>;
   LoginResult: ResolverTypeWrapper<ResolversUnionTypes['LoginResult']>;
-  LoginToken: ResolverTypeWrapper<LoginToken>;
+  LoginTokens: ResolverTypeWrapper<LoginTokens>;
   Mutation: ResolverTypeWrapper<{}>;
   NotAllowedError: ResolverTypeWrapper<NotAllowedError>;
   NotFoundError: ResolverTypeWrapper<NotFoundError>;
@@ -199,7 +200,7 @@ export type ResolversParentTypes = {
   InvalidCredentialsError: InvalidCredentialsError;
   InvalidInputError: InvalidInputError;
   LoginResult: ResolversUnionParentTypes['LoginResult'];
-  LoginToken: LoginToken;
+  LoginTokens: LoginTokens;
   Mutation: {};
   NotAllowedError: NotAllowedError;
   NotFoundError: NotFoundError;
@@ -233,11 +234,12 @@ export type InvalidInputErrorResolvers<ContextType = any, ParentType extends Res
 };
 
 export type LoginResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginResult'] = ResolversParentTypes['LoginResult']> = {
-  __resolveType: TypeResolveFn<'InvalidCredentialsError' | 'LoginToken' | 'UnknownError', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'InvalidCredentialsError' | 'LoginTokens' | 'UnknownError', ParentType, ContextType>;
 };
 
-export type LoginTokenResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginToken'] = ResolversParentTypes['LoginToken']> = {
-  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type LoginTokensResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginTokens'] = ResolversParentTypes['LoginTokens']> = {
+  accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -283,7 +285,7 @@ export type Resolvers<ContextType = any> = {
   InvalidCredentialsError?: InvalidCredentialsErrorResolvers<ContextType>;
   InvalidInputError?: InvalidInputErrorResolvers<ContextType>;
   LoginResult?: LoginResultResolvers<ContextType>;
-  LoginToken?: LoginTokenResolvers<ContextType>;
+  LoginTokens?: LoginTokensResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   NotAllowedError?: NotAllowedErrorResolvers<ContextType>;
   NotFoundError?: NotFoundErrorResolvers<ContextType>;

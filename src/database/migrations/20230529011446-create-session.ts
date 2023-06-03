@@ -12,6 +12,10 @@ export const up: Migration = async ({
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
     },
+    refreshToken: {
+      allowNull: false,
+      type: DataTypes.STRING,
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,

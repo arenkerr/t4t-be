@@ -3,6 +3,7 @@ import User from './user.model.js';
 
 class Session extends Model {
   public id!: string;
+  public refreshToken!: string;
   public createdAt!: Date;
   public updatedAt!: Date;
 }
@@ -14,6 +15,10 @@ const initModel = (sequelize: Sequelize) => {
         type: DataTypes.UUID,
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
+      },
+      refreshToken: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
     },
     {

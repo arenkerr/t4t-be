@@ -31,9 +31,10 @@ const userResolvers: Resolvers = {
     email: (parent) => parent.email,
   },
 
-  LoginToken: {
-    __isTypeOf: (parent) => !!parent.token,
-    token: (parent) => parent.token,
+  LoginTokens: {
+    __isTypeOf: (parent) => !!(parent.accessToken && parent.refreshToken),
+    accessToken: (parent) => parent.accessToken,
+    refreshToken: (parent) => parent.refreshToken,
   },
   UnknownError: {
     __isTypeOf: (parent) => parent.message === UNKNOWN_ERROR,
