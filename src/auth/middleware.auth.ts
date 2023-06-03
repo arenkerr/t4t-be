@@ -15,7 +15,6 @@ export const authMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  // TODO: validate tokens
   try {
     const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
     const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
@@ -32,12 +31,14 @@ export const authMiddleware = async (
 
     // verify access token
     if (accessToken) {
-      const decodedAccessToken = verify(
-        accessToken,
-        accessTokenSecret
-      ) as UserIDJwtPayload;
+      const decodedAccessToken = verify(accessToken, accessTokenSecret, {
+        ignoreExpiration: true,
+      }) as UserIDJwtPayload;
+      const currentTime = new Date().getTime() / 1000;
+      const isExp =
+        decodedAccessToken.exp && decodedAccessToken.exp < currentTime;
 
-      if (decodedAccessToken && decodedAccessToken.userId) {
+      if (decodedAccessToken && !!isExp) {
         return next();
       }
     }
