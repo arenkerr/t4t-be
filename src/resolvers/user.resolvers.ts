@@ -20,22 +20,25 @@ const userResolvers: Resolvers = {
   Mutation: {
     createUser: (_, args: MutationCreateUserArgs): Promise<CreateUserResult> =>
       UserService.createUser(args),
-    login: (_, args: MutationLoginArgs): Promise<LoginResult> =>
-      UserService.login(args),
+    login: (_, args: MutationLoginArgs, contextValue): Promise<LoginResult> =>
+      UserService.login(args, contextValue),
   },
-
   User: {
     __isTypeOf: (parent) => parent instanceof UserEntity,
     id: (parent) => parent.id,
     username: (parent) => parent.username,
     email: (parent) => parent.email,
   },
-
-  LoginTokens: {
-    __isTypeOf: (parent) => !!(parent.accessToken && parent.refreshToken),
-    accessToken: (parent) => parent.accessToken,
-    refreshToken: (parent) => parent.refreshToken,
+  LoginData: {
+    __isTypeOf: (parent) => !!(parent.sessionId && parent.userId),
+    sessionId: (parent) => parent.sessionId,
+    userId: (parent) => parent.userId,
   },
+  // LoginTokens: {
+  //   __isTypeOf: (parent) => !!(parent.accessToken && parent.refreshToken),
+  //   accessToken: (parent) => parent.accessToken,
+  //   refreshToken: (parent) => parent.refreshToken,
+  // },
   UnknownError: {
     __isTypeOf: (parent) => parent.message === UNKNOWN_ERROR,
     message: (parent) => parent.message,

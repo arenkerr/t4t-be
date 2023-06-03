@@ -5,8 +5,8 @@ import UserModel from '../database/models/user.model.js';
 import {
   CreateUserResult,
   LoginResult,
-  LoginTokens,
   MutationCreateUserArgs,
+  MutationLoginArgs,
   User,
 } from '../types/graphql.js';
 import logger from '../util/logger.util.js';
@@ -23,6 +23,7 @@ import {
 } from '../constants/auth.constants.js';
 import SessionModel from '../database/models/session.model.js';
 import { Response } from 'express';
+import { ExpressContextFunctionArgument } from '@apollo/server/dist/esm/express4/index.js';
 
 class UserService {
   static async getUsers(): Promise<User[] | undefined> {
@@ -64,30 +65,20 @@ class UserService {
     }
   }
 
-  static async login({
-    username,
-    password,
-  }: {
-    username: string;
-    password: string;
-  }): Promise<LoginResult> {
+  static async login(
+    { username, password }: MutationLoginArgs,
+    { res }: ExpressContextFunctionArgument
+  ): Promise<LoginResult> {
     try {
-      const secret = process.env.TOKEN_SECRET;
-
-      if (!secret) {
-        throw Error('No secret token');
-      }
-
       const user = await UserModel.findOne({
         where: { username },
-        include: SessionModel,
       });
 
       if (user) {
         const match = await bcrypt.compare(password, user.password);
 
         if (match) {
-          const tokens = this.createTokens(user, secret);
+          const tokens = this.createTokens(user);
           const sessionId = await this.createSession(
             tokens.refreshToken,
             user.sessionId
@@ -102,10 +93,9 @@ class UserService {
             throw Error(`Could not update user ${user.id} session id`);
           }
 
-          // this.setCookies(tokens, res);
-          // return { id: user.id, session: savedSessionId, ...any other useful data }
+          this.setCookies(tokens, res);
 
-          // TODO: update mutation and gql types to pass res object, return user data
+          return { userId: user.id, sessionId };
         }
       }
 
@@ -137,22 +127,34 @@ class UserService {
     return id;
   }
 
-  static createTokens(user: UserModel, secret: string): LoginTokens {
+  static createTokens(user: UserModel): {
+    accessToken: string;
+    refreshToken: string;
+  } {
     // TODO: add user role to token payload
-    // TODO: make a new secret for each token type
-    const payload = { user: { id: user.id } };
+    const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+    const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
+
+    if (!accessTokenSecret || !refreshTokenSecret) {
+      throw Error('Missing token secret');
+    }
+
+    const payload = { userId: user.id };
     return {
-      accessToken: jwt.sign(payload, secret, {
+      accessToken: jwt.sign(payload, accessTokenSecret, {
         expiresIn: ACCESS_TOKEN_EXP,
       }),
-      refreshToken: jwt.sign(payload, secret, {
+      refreshToken: jwt.sign(payload, refreshTokenSecret, {
         expiresIn: REFRESH_TOKEN_EXP,
       }),
     };
   }
 
   static setCookies(
-    { accessToken, refreshToken }: LoginTokens,
+    {
+      accessToken,
+      refreshToken,
+    }: { accessToken: string; refreshToken: string },
     res: Response
   ): void {
     const options = {

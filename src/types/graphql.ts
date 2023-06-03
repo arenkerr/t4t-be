@@ -31,13 +31,13 @@ export type InvalidInputError = BaseError & {
   message: Scalars['String'];
 };
 
-export type LoginResult = InvalidCredentialsError | LoginTokens | UnknownError;
-
-export type LoginTokens = {
-  __typename?: 'LoginTokens';
-  accessToken: Scalars['String'];
-  refreshToken: Scalars['String'];
+export type LoginData = {
+  __typename?: 'LoginData';
+  sessionId: Scalars['String'];
+  userId: Scalars['String'];
 };
+
+export type LoginResult = InvalidCredentialsError | LoginData | UnknownError;
 
 export type Mutation = {
   __typename?: 'Mutation';
@@ -88,6 +88,7 @@ export type User = {
   email: Scalars['String'];
   id: Scalars['ID'];
   password: Scalars['String'];
+  sessionId?: Maybe<Scalars['String']>;
   username: Scalars['String'];
 };
 
@@ -161,13 +162,13 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping of union types */
 export type ResolversUnionTypes = {
   CreateUserResult: ( UnknownError ) | ( User );
-  LoginResult: ( InvalidCredentialsError ) | ( LoginTokens ) | ( UnknownError );
+  LoginResult: ( InvalidCredentialsError ) | ( LoginData ) | ( UnknownError );
 };
 
 /** Mapping of union parent types */
 export type ResolversUnionParentTypes = {
   CreateUserResult: ( UnknownError ) | ( User );
-  LoginResult: ( InvalidCredentialsError ) | ( LoginTokens ) | ( UnknownError );
+  LoginResult: ( InvalidCredentialsError ) | ( LoginData ) | ( UnknownError );
 };
 
 /** Mapping between all available schema types and the resolvers types */
@@ -179,8 +180,8 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>;
   InvalidCredentialsError: ResolverTypeWrapper<InvalidCredentialsError>;
   InvalidInputError: ResolverTypeWrapper<InvalidInputError>;
+  LoginData: ResolverTypeWrapper<LoginData>;
   LoginResult: ResolverTypeWrapper<ResolversUnionTypes['LoginResult']>;
-  LoginTokens: ResolverTypeWrapper<LoginTokens>;
   Mutation: ResolverTypeWrapper<{}>;
   NotAllowedError: ResolverTypeWrapper<NotAllowedError>;
   NotFoundError: ResolverTypeWrapper<NotFoundError>;
@@ -199,8 +200,8 @@ export type ResolversParentTypes = {
   ID: Scalars['ID'];
   InvalidCredentialsError: InvalidCredentialsError;
   InvalidInputError: InvalidInputError;
+  LoginData: LoginData;
   LoginResult: ResolversUnionParentTypes['LoginResult'];
-  LoginTokens: LoginTokens;
   Mutation: {};
   NotAllowedError: NotAllowedError;
   NotFoundError: NotFoundError;
@@ -233,14 +234,14 @@ export type InvalidInputErrorResolvers<ContextType = any, ParentType extends Res
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type LoginResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginResult'] = ResolversParentTypes['LoginResult']> = {
-  __resolveType: TypeResolveFn<'InvalidCredentialsError' | 'LoginTokens' | 'UnknownError', ParentType, ContextType>;
+export type LoginDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginData'] = ResolversParentTypes['LoginData']> = {
+  sessionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type LoginTokensResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginTokens'] = ResolversParentTypes['LoginTokens']> = {
-  accessToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  refreshToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+export type LoginResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginResult'] = ResolversParentTypes['LoginResult']> = {
+  __resolveType: TypeResolveFn<'InvalidCredentialsError' | 'LoginData' | 'UnknownError', ParentType, ContextType>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
@@ -274,6 +275,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  sessionId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -284,8 +286,8 @@ export type Resolvers<ContextType = any> = {
   Date?: GraphQLScalarType;
   InvalidCredentialsError?: InvalidCredentialsErrorResolvers<ContextType>;
   InvalidInputError?: InvalidInputErrorResolvers<ContextType>;
+  LoginData?: LoginDataResolvers<ContextType>;
   LoginResult?: LoginResultResolvers<ContextType>;
-  LoginTokens?: LoginTokensResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   NotAllowedError?: NotAllowedErrorResolvers<ContextType>;
   NotFoundError?: NotFoundErrorResolvers<ContextType>;

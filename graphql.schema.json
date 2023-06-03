@@ -179,38 +179,12 @@
         "possibleTypes": null
       },
       {
-        "kind": "UNION",
-        "name": "LoginResult",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "InvalidCredentialsError",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "LoginTokens",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "UnknownError",
-            "ofType": null
-          }
-        ]
-      },
-      {
         "kind": "OBJECT",
-        "name": "LoginTokens",
+        "name": "LoginData",
         "description": null,
         "fields": [
           {
-            "name": "accessToken",
+            "name": "sessionId",
             "description": null,
             "args": [],
             "type": {
@@ -226,7 +200,7 @@
             "deprecationReason": null
           },
           {
-            "name": "refreshToken",
+            "name": "userId",
             "description": null,
             "args": [],
             "type": {
@@ -246,6 +220,32 @@
         "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
+      },
+      {
+        "kind": "UNION",
+        "name": "LoginResult",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "InvalidCredentialsError",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "LoginData",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "UnknownError",
+            "ofType": null
+          }
+        ]
       },
       {
         "kind": "OBJECT",
@@ -621,6 +621,18 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sessionId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

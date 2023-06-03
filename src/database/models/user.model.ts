@@ -9,6 +9,7 @@ class User extends Model {
   public bio!: string;
   public avatarUrl!: string;
   public sessionId!: string;
+  public session!: Session;
   public createdAt!: Date;
   public updatedAt!: Date;
   public deletedAt!: Date;
@@ -61,6 +62,7 @@ const initModel = (sequelize: Sequelize) => {
     },
   });
   User.belongsTo(Session, {
+    as: 'session',
     foreignKey: {
       name: 'sessionId',
     },

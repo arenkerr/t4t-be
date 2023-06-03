@@ -1,5 +1,4 @@
 import { Model, DataTypes, Sequelize } from 'sequelize';
-import User from './user.model.js';
 
 class Session extends Model {
   public id!: string;

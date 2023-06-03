@@ -11,6 +11,7 @@ type User {
   bio: String
   avatarUrl: String
   createdAt: Date!
+  sessionId: String
 }
 
 # TODO: validate user result
@@ -24,13 +25,13 @@ type DuplicateEmailError implements BaseError {
 
 union CreateUserResult = User | UnknownError
 
-type LoginTokens {
-  accessToken: String!
-  refreshToken: String!
+type LoginData {
+  userId: String!
+  sessionId: String!
 }
 
 type InvalidCredentialsError implements BaseError {
   message: String!
 }
 
-union LoginResult = LoginTokens | UnknownError | InvalidCredentialsError
+union LoginResult = LoginData | UnknownError | InvalidCredentialsError

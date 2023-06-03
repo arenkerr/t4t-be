@@ -38,12 +38,10 @@ const port = process.env.PORT;
 
 await server.start();
 
+app.use(cors(config), json(), cookieParser());
 app.use(authMiddleware);
 app.use(
   '/graphql',
-  cors(config),
-  json(),
-  cookieParser(),
   expressMiddleware(server, { context: async ({ req, res }) => ({ req, res }) })
 );
 
