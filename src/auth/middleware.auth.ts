@@ -1,13 +1,17 @@
 import bcrypt from 'bcrypt';
 import { NextFunction, Request, Response } from 'express';
-import { JwtPayload, verify } from 'jsonwebtoken';
+import { verify } from 'jsonwebtoken';
 import logger from '../util/logger.util.js';
 import UserModel from '../database/models/user.model.js';
 import SessionModel from '../database/models/session.model.js';
 import UserService from '../services/user.service.js';
+import { UserJwtPayload } from '../types/auth.types.js';
+import { User } from '../types/graphql.js';
 
-export interface UserIDJwtPayload extends JwtPayload {
-  userId: string;
+declare module 'Express' {
+  export interface Request {
+    user?: User;
+  }
 }
 
 export const authMiddleware = async (
@@ -33,64 +37,68 @@ export const authMiddleware = async (
     if (accessToken) {
       const decodedAccessToken = verify(accessToken, accessTokenSecret, {
         ignoreExpiration: true,
-      }) as UserIDJwtPayload;
+      }) as UserJwtPayload;
       const currentTime = new Date().getTime() / 1000;
       const isExp =
         decodedAccessToken.exp && decodedAccessToken.exp < currentTime;
 
-      if (decodedAccessToken && !!isExp) {
+      if (decodedAccessToken && !isExp) {
+        req.user = decodedAccessToken.user;
+
         return next();
       }
     }
 
     // if access token is not valid, verify refresh token
-    const { userId } = verify(
-      refreshToken,
-      refreshTokenSecret
-    ) as UserIDJwtPayload;
+    const { user } = verify(refreshToken, refreshTokenSecret) as UserJwtPayload;
 
-    if (userId) {
-      const user = await UserModel.findOne({
-        where: { id: userId },
+    if (user.id) {
+      const foundUser = await UserModel.findOne({
+        where: { id: user.id },
         include: [{ model: SessionModel, as: 'session' }],
       });
 
-      if (!user) {
-        throw Error(`No user found for id ${userId}`);
+      if (!foundUser) {
+        throw Error(`No user found for id ${user.id}`);
       }
 
       const match = await bcrypt.compare(
         refreshToken,
-        user.session.refreshToken
+        foundUser.session.refreshToken
       );
 
       if (!match) {
         res.clearCookie('accessToken');
         res.clearCookie('refreshToken');
+
         return next();
       }
 
       // if refresh token is valid, update token cookies and user session
-      const tokens = UserService.createTokens(user);
+      const tokens = UserService.createTokens(foundUser);
       const sessionId = await UserService.createSession(
         tokens.refreshToken,
-        user.sessionId
+        foundUser.sessionId
       );
 
       const result = await UserModel.update(
         { sessionId },
-        { where: { id: user.id } }
+        { where: { id: foundUser.id } }
       );
 
       if (!result) {
-        throw Error(`Could not update user ${user.id} session id`);
+        throw Error(`Could not update user ${foundUser.id} session id`);
       }
 
+      req.user = foundUser;
       UserService.setCookies(tokens, res);
     }
 
     return next();
   } catch (err) {
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+
     logger.error(`authMiddleware - ${err}`);
 
     return next();

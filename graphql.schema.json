@@ -41,17 +41,12 @@
           },
           {
             "kind": "OBJECT",
-            "name": "InvalidInputError",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "NotAllowedError",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
             "name": "NotFoundError",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "UnauthorizedError",
             "ofType": null
           },
           {
@@ -80,6 +75,11 @@
         "interfaces": null,
         "enumValues": null,
         "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "UnauthorizedError",
+            "ofType": null
+          },
           {
             "kind": "OBJECT",
             "name": "UnknownError",
@@ -115,39 +115,6 @@
       {
         "kind": "OBJECT",
         "name": "InvalidCredentialsError",
-        "description": null,
-        "fields": [
-          {
-            "name": "message",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "BaseError",
-            "ofType": null
-          }
-        ],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "InvalidInputError",
         "description": null,
         "fields": [
           {
@@ -398,39 +365,6 @@
       },
       {
         "kind": "OBJECT",
-        "name": "NotAllowedError",
-        "description": null,
-        "fields": [
-          {
-            "name": "message",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "BaseError",
-            "ofType": null
-          }
-        ],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
         "name": "NotFoundError",
         "description": null,
         "fields": [
@@ -496,6 +430,39 @@
         "fields": null,
         "inputFields": null,
         "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UnauthorizedError",
+        "description": null,
+        "fields": [
+          {
+            "name": "message",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "BaseError",
+            "ofType": null
+          }
+        ],
         "enumValues": null,
         "possibleTypes": null
       },

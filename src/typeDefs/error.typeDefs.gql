@@ -2,11 +2,11 @@ interface BaseError {
   message: String!
 }
 
-type InvalidInputError implements BaseError {
+type InvalidCredentialsError implements BaseError {
   message: String!
 }
 
-type NotFoundError implements BaseError {
+type UnauthorizedError implements BaseError {
   message: String!
 }
 
@@ -14,6 +14,6 @@ type UnknownError implements BaseError {
   message: String!
 }
 
-type NotAllowedError implements BaseError {
+type NotFoundError implements BaseError {
   message: String!
 }

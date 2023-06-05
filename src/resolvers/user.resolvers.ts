@@ -9,6 +9,7 @@ import {
 import UserService from '../services/user.service.js';
 import {
   INVALID_CREDENTIALS_ERROR,
+  UNAUTHORIZED_ERROR,
   UNKNOWN_ERROR,
 } from '../constants/error.constants.js';
 import UserEntity from '../database/models/user.model.js';
@@ -34,17 +35,16 @@ const userResolvers: Resolvers = {
     sessionId: (parent) => parent.sessionId,
     userId: (parent) => parent.userId,
   },
-  // LoginTokens: {
-  //   __isTypeOf: (parent) => !!(parent.accessToken && parent.refreshToken),
-  //   accessToken: (parent) => parent.accessToken,
-  //   refreshToken: (parent) => parent.refreshToken,
-  // },
   UnknownError: {
     __isTypeOf: (parent) => parent.message === UNKNOWN_ERROR,
     message: (parent) => parent.message,
   },
   InvalidCredentialsError: {
     __isTypeOf: (parent) => parent.message === INVALID_CREDENTIALS_ERROR,
+    message: (parent) => parent.message,
+  },
+  UnauthorizedError: {
+    __isTypeOf: (parent) => parent.message === UNAUTHORIZED_ERROR,
     message: (parent) => parent.message,
   },
 };

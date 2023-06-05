@@ -139,7 +139,7 @@ class UserService {
       throw Error('Missing token secret');
     }
 
-    const payload = { userId: user.id };
+    const payload = { user };
     return {
       accessToken: jwt.sign(payload, accessTokenSecret, {
         expiresIn: ACCESS_TOKEN_EXP,
