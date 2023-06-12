@@ -6,7 +6,7 @@ import {
   Resolvers,
   User,
 } from '../types/graphql.js';
-import UserService from '../services/user.service.js';
+import UserService from '../services/user/user.service.js';
 import {
   INVALID_CREDENTIALS_ERROR,
   UNAUTHORIZED_ERROR,

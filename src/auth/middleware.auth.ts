@@ -4,15 +4,8 @@ import { verify } from 'jsonwebtoken';
 import logger from '../util/logger.util.js';
 import UserModel from '../database/models/user.model.js';
 import SessionModel from '../database/models/session.model.js';
-import UserService from '../services/user.service.js';
+import UserService from '../services/user/user.service.js';
 import { UserJwtPayload } from '../types/auth.types.js';
-import { User } from '../types/graphql.js';
-
-declare module 'Express' {
-  export interface Request {
-    user?: User;
-  }
-}
 
 export const authMiddleware = async (
   req: Request,
