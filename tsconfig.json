@@ -9,6 +9,7 @@
     "outDir": "dist",
     "module": "esnext",
     "esModuleInterop": true,
-    "types": ["node"]
+    "types": ["node"],
+    "allowSyntheticDefaultImports": true
   }
 }
