@@ -1,4 +1,4 @@
-import { describe, expect, fit, it, jest } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals';
 import {
   CreateUserResult,
   MutationCreateUserArgs,
