@@ -8,7 +8,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import resolvers from './resolvers/index.js';
 import * as db from './database/models/sequelize.js';
-import { authMiddleware } from './auth/middleware.auth.js';
+import { authMiddleware } from './middleware/auth.middleware.js';
 import { config } from './util/cors.util.js';
 
 const database = async () => {
