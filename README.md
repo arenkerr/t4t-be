@@ -19,3 +19,9 @@ yarn start
 ```
 sequelize-cli model:generate --name [table name] --attributes column:type
 ```
+
+## Regenerate types from gql schema
+
+```
+yarn types
+```
