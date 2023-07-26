@@ -3,6 +3,8 @@ import {
   LoginResult,
   MutationCreateUserArgs,
   MutationLoginArgs,
+  QueryFindUserArgs,
+  QueryUserResult,
   Resolvers,
   User,
 } from '../types/graphql.js';
@@ -13,10 +15,15 @@ import {
   UNKNOWN_ERROR,
 } from '../constants/error.constants.js';
 import UserEntity from '../database/models/user.model.js';
+import { Request, Response } from 'express';
 
 const userResolvers: Resolvers = {
   Query: {
-    users: (): Promise<User[] | undefined> => UserService.getUsers(),
+    findUser: (_, { id }: QueryFindUserArgs): Promise<QueryUserResult | null> =>
+      UserService.getUser(id),
+    findUsers: (): Promise<User[] | undefined> => UserService.getUsers(),
+    findLoggedInUser: (_, __, contextValue: { req: Request; res: Response }) =>
+      UserService.getUser(contextValue.req.user.id),
   },
   Mutation: {
     createUser: (_, args: MutationCreateUserArgs): Promise<CreateUserResult> =>

@@ -1,9 +1,12 @@
 # import User from 'user.typeDefs.gql'
 # import CreateUserResult from 'user.typeDefs.gql'
 # import LoginResult from 'user.typeDefs.gql'
+# import QueryUserResult from 'user.typeDefs.gql'
 
 type Query {
-  users: [User]
+  findUser(id: String!): QueryUserResult
+  findUsers: [User]
+  findLoggedInUser: QueryUserResult
 }
 
 type Mutation {

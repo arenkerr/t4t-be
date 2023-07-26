@@ -12,10 +12,11 @@ import bcrypt from 'bcrypt';
 
 import { User } from '../types/graphql.js';
 import { authMiddleware } from './auth.middleware.js';
-import { Request, Response } from 'express-serve-static-core';
+import { Request, Response } from 'express';
 import logger from '../util/logger.util.js';
 import UserModel from '../database/models/user.model.js';
 import UserService from '../services/user/user.service.js';
+import { UserTokenData } from '../types/auth.types.js';
 
 const mUserService = jest.mocked(UserService);
 const mUser = jest.mocked(UserModel) as jest.MockedClass<typeof UserModel>;
@@ -27,31 +28,38 @@ const mockUser: User = {
   password: 'mockPassword',
   email: 'mockEmail',
 };
+
+const mockUserTokenData: UserTokenData = {
+  id: mockUser.id,
+  sessionId: 'mockSessionId',
+};
+
 const mockRequest = {
-  user: mockUser,
+  user: mockUserTokenData,
   cookies: {
     refreshToken: 'mockRefreshToken',
     accessToken: 'mockAccessToken',
   },
 } as unknown as Request;
+
 const mockResponse = {
   clearCookie: () => null,
 } as unknown as Response;
 
 const mockAccessToken = jwt.sign(
-  { user: mockUser },
+  { user: mockUserTokenData },
   process.env.ACCESS_TOKEN_SECRET as string,
   { expiresIn: '1d' }
 );
 
 const mockExpiredAccessToken = jwt.sign(
-  { user: mockUser },
+  { user: mockUserTokenData },
   process.env.ACCESS_TOKEN_SECRET as string,
   { expiresIn: '0ms' }
 );
 
 const mockRefreshToken = jwt.sign(
-  { user: mockUser },
+  { user: mockUserTokenData },
   process.env.REFRESH_TOKEN_SECRET as string,
   { expiresIn: '1d' }
 );

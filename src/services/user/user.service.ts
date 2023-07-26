@@ -7,6 +7,8 @@ import {
   LoginResult,
   MutationCreateUserArgs,
   MutationLoginArgs,
+  QueryUserResult,
+  UnknownError,
   User,
 } from '../../types/graphql.js';
 import logger from '../../util/logger.util.js';
@@ -31,6 +33,20 @@ class UserService {
       return UserModel.findAll();
     } catch (err) {
       logger.error(`${this.name}.${this.getUsers.name} - ${err}`);
+    }
+  }
+
+  static async getUser(
+    id: string
+  ): Promise<QueryUserResult | UnknownError | null> {
+    try {
+      return UserModel.findOne({
+        where: { id },
+      });
+    } catch (err) {
+      logger.error(`${this.name}.${this.getUsers.name} - ${err}`);
+
+      return createError(UNKNOWN_ERROR);
     }
   }
 
@@ -139,7 +155,8 @@ class UserService {
       throw Error('Missing token secret');
     }
 
-    const payload = { user };
+    const payload = { user: { id: user.id, sessionId: user.sessionId } };
+
     return {
       accessToken: jwt.sign(payload, accessTokenSecret, {
         expiresIn: ACCESS_TOKEN_EXP,
@@ -160,7 +177,6 @@ class UserService {
     const options = {
       httpOnly: true,
     };
-
     res.cookie('accessToken', accessToken, options);
     res.cookie('refreshToken', refreshToken, options);
   }

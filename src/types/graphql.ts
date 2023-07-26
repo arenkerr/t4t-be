@@ -19,7 +19,7 @@ export type BaseError = {
   message: Scalars['String'];
 };
 
-export type CreateUserResult = UnauthorizedError | UnknownError | User;
+export type CreateUserResult = UnknownError | User;
 
 export type InvalidCredentialsError = BaseError & {
   __typename?: 'InvalidCredentialsError';
@@ -62,8 +62,17 @@ export type NotFoundError = BaseError & {
 
 export type Query = {
   __typename?: 'Query';
-  users?: Maybe<Array<Maybe<User>>>;
+  findLoggedInUser?: Maybe<QueryUserResult>;
+  findUser?: Maybe<QueryUserResult>;
+  findUsers?: Maybe<Array<Maybe<User>>>;
 };
+
+
+export type QueryFindUserArgs = {
+  id: Scalars['String'];
+};
+
+export type QueryUserResult = UnknownError | User;
 
 export type UnauthorizedError = BaseError & {
   __typename?: 'UnauthorizedError';
@@ -156,14 +165,16 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping of union types */
 export type ResolversUnionTypes = {
-  CreateUserResult: ( UnauthorizedError ) | ( UnknownError ) | ( User );
+  CreateUserResult: ( UnknownError ) | ( User );
   LoginResult: ( InvalidCredentialsError ) | ( LoginData ) | ( UnknownError );
+  QueryUserResult: ( UnknownError ) | ( User );
 };
 
 /** Mapping of union parent types */
 export type ResolversUnionParentTypes = {
-  CreateUserResult: ( UnauthorizedError ) | ( UnknownError ) | ( User );
+  CreateUserResult: ( UnknownError ) | ( User );
   LoginResult: ( InvalidCredentialsError ) | ( LoginData ) | ( UnknownError );
+  QueryUserResult: ( UnknownError ) | ( User );
 };
 
 /** Mapping between all available schema types and the resolvers types */
@@ -179,6 +190,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   NotFoundError: ResolverTypeWrapper<NotFoundError>;
   Query: ResolverTypeWrapper<{}>;
+  QueryUserResult: ResolverTypeWrapper<ResolversUnionTypes['QueryUserResult']>;
   String: ResolverTypeWrapper<Scalars['String']>;
   UnauthorizedError: ResolverTypeWrapper<UnauthorizedError>;
   UnknownError: ResolverTypeWrapper<UnknownError>;
@@ -198,6 +210,7 @@ export type ResolversParentTypes = {
   Mutation: {};
   NotFoundError: NotFoundError;
   Query: {};
+  QueryUserResult: ResolversUnionParentTypes['QueryUserResult'];
   String: Scalars['String'];
   UnauthorizedError: UnauthorizedError;
   UnknownError: UnknownError;
@@ -210,7 +223,7 @@ export type BaseErrorResolvers<ContextType = any, ParentType extends ResolversPa
 };
 
 export type CreateUserResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['CreateUserResult'] = ResolversParentTypes['CreateUserResult']> = {
-  __resolveType: TypeResolveFn<'UnauthorizedError' | 'UnknownError' | 'User', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'UnknownError' | 'User', ParentType, ContextType>;
 };
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
@@ -243,7 +256,13 @@ export type NotFoundErrorResolvers<ContextType = any, ParentType extends Resolve
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+  findLoggedInUser?: Resolver<Maybe<ResolversTypes['QueryUserResult']>, ParentType, ContextType>;
+  findUser?: Resolver<Maybe<ResolversTypes['QueryUserResult']>, ParentType, ContextType, RequireFields<QueryFindUserArgs, 'id'>>;
+  findUsers?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+};
+
+export type QueryUserResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['QueryUserResult'] = ResolversParentTypes['QueryUserResult']> = {
+  __resolveType: TypeResolveFn<'UnknownError' | 'User', ParentType, ContextType>;
 };
 
 export type UnauthorizedErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['UnauthorizedError'] = ResolversParentTypes['UnauthorizedError']> = {
@@ -278,6 +297,7 @@ export type Resolvers<ContextType = any> = {
   Mutation?: MutationResolvers<ContextType>;
   NotFoundError?: NotFoundErrorResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  QueryUserResult?: QueryUserResultResolvers<ContextType>;
   UnauthorizedError?: UnauthorizedErrorResolvers<ContextType>;
   UnknownError?: UnknownErrorResolvers<ContextType>;
   User?: UserResolvers<ContextType>;

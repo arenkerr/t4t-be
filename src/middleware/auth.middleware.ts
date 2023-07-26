@@ -6,8 +6,7 @@ import logger from '../util/logger.util.js';
 import UserModel from '../database/models/user.model.js';
 import SessionModel from '../database/models/session.model.js';
 import UserService from '../services/user/user.service.js';
-import { UserJwtPayload } from '../types/auth.types.js';
-import { User } from '../types/graphql.js';
+import { UserJwtPayload, UserTokenData } from '../types/auth.types.js';
 
 export const authMiddleware = async (
   req: Request,
@@ -46,10 +45,8 @@ export const authMiddleware = async (
 
       // if refresh token is valid, update token cookies and user session
       if (foundUser) {
-        updateUserSession(foundUser, req, res);
+        updateUserSession(foundUser, req, res, next);
       }
-
-      return next();
     }
   } catch (err) {
     res.clearCookie('accessToken');
@@ -74,7 +71,10 @@ const verifyAccessToken = (
   const isExp = decodedAccessToken.exp && decodedAccessToken.exp < currentTime;
 
   if (decodedAccessToken && !isExp) {
-    req.user = decodedAccessToken.user;
+    req.user = {
+      id: decodedAccessToken.user.id,
+      sessionId: decodedAccessToken.user.sessionId,
+    };
 
     // if access token is valid & unexpired, continue
     return next();
@@ -82,7 +82,7 @@ const verifyAccessToken = (
 };
 
 const validateRefreshTokenUser = async (
-  user: User,
+  user: UserTokenData,
   refreshToken: string,
   res: Response,
   next: NextFunction
@@ -115,7 +115,8 @@ const validateRefreshTokenUser = async (
 const updateUserSession = async (
   foundUser: UserModel,
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const tokens = UserService.createTokens(foundUser);
   const sessionId = await UserService.createSession(
@@ -132,6 +133,13 @@ const updateUserSession = async (
     throw Error(`Could not update user ${foundUser.id} session id`);
   }
 
-  req.user = foundUser;
+  req.user = { id: foundUser.id, sessionId };
+
+  // clear cookies before resetting them
+  res.clearCookie('accessToken');
+  res.clearCookie('refreshToken');
+
   UserService.setCookies(tokens, res);
+
+  next();
 };

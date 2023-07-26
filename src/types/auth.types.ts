@@ -1,12 +1,16 @@
 import { JwtPayload } from 'jsonwebtoken';
-import { User } from './graphql';
 
-declare module 'Express' {
+export interface UserTokenData {
+  id: string;
+  sessionId: string;
+}
+
+declare module 'express-serve-static-core' {
   export interface Request {
-    user?: User;
+    user: UserTokenData;
   }
 }
 
 export interface UserJwtPayload extends JwtPayload {
-  user: User;
+  user: UserTokenData;
 }
