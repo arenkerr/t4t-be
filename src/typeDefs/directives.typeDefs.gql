@@ -1,0 +1,1 @@
+directive @isUser on OBJECT | FIELD_DEFINITION

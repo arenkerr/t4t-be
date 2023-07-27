@@ -6,10 +6,12 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import express, { json } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+
 import resolvers from './resolvers/index.js';
 import * as db from './database/models/sequelize.js';
 import { authMiddleware } from './middleware/auth.middleware.js';
 import { config } from './util/cors.util.js';
+import { authDirectiveTransformer } from './directives/auth.directive.js';
 
 const database = async () => {
   try {
@@ -25,12 +27,14 @@ const database = async () => {
 
 database();
 
-const schema = makeExecutableSchema({
+let schema = makeExecutableSchema({
   typeDefs: await loadSchema('src/typeDefs/schema.gql', {
     loaders: [new GraphQLFileLoader()],
   }),
   resolvers,
 });
+
+schema = authDirectiveTransformer(schema, 'isUser');
 
 const server = new ApolloServer({ schema });
 const app = express();
