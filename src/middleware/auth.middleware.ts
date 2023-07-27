@@ -29,25 +29,37 @@ export const authMiddleware = async (
     }
 
     if (accessToken) {
-      verifyAccessToken(accessToken, accessTokenSecret, req, next);
+      const decodedAccessToken = verify(accessToken, accessTokenSecret, {
+        ignoreExpiration: true,
+      }) as UserJwtPayload;
+      const currentTime = new Date().getTime() / 1000;
+      const isExp =
+        decodedAccessToken.exp && decodedAccessToken.exp < currentTime;
+
+      if (decodedAccessToken && !isExp) {
+        req.user = {
+          id: decodedAccessToken.user.id,
+          sessionId: decodedAccessToken.user.sessionId,
+        };
+
+        // if access token is valid & unexpired, continue
+        return next();
+      }
     }
 
     // if access token is expired, verify refresh token instead
     const { user } = verify(refreshToken, refreshTokenSecret) as UserJwtPayload;
 
     if (user.id) {
-      const foundUser = await validateRefreshTokenUser(
-        user,
-        refreshToken,
-        res,
-        next
-      );
+      const foundUser = await validateRefreshTokenUser(user, refreshToken);
 
       // if refresh token is valid, update token cookies and user session
       if (foundUser) {
-        updateUserSession(foundUser, req, res, next);
+        updateUserSession(foundUser, req, res);
       }
     }
+
+    return next();
   } catch (err) {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
@@ -58,34 +70,9 @@ export const authMiddleware = async (
   }
 };
 
-const verifyAccessToken = (
-  token: string,
-  secret: string,
-  req: Request,
-  next: NextFunction
-) => {
-  const decodedAccessToken = verify(token, secret, {
-    ignoreExpiration: true,
-  }) as UserJwtPayload;
-  const currentTime = new Date().getTime() / 1000;
-  const isExp = decodedAccessToken.exp && decodedAccessToken.exp < currentTime;
-
-  if (decodedAccessToken && !isExp) {
-    req.user = {
-      id: decodedAccessToken.user.id,
-      sessionId: decodedAccessToken.user.sessionId,
-    };
-
-    // if access token is valid & unexpired, continue
-    return next();
-  }
-};
-
 const validateRefreshTokenUser = async (
   user: UserTokenData,
-  refreshToken: string,
-  res: Response,
-  next: NextFunction
+  refreshToken: string
 ) => {
   const foundUser = await UserModel.findOne({
     where: { id: user.id },
@@ -101,12 +88,8 @@ const validateRefreshTokenUser = async (
     foundUser.session.refreshToken
   );
 
-  // if user's stored token does not match, clear cookies and return next
   if (!match) {
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
-
-    return next();
+    throw Error(`Token mismatch for ${user.id}`);
   }
 
   return foundUser;
@@ -115,8 +98,7 @@ const validateRefreshTokenUser = async (
 const updateUserSession = async (
   foundUser: UserModel,
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ) => {
   const tokens = UserService.createTokens(foundUser);
   const sessionId = await UserService.createSession(
@@ -134,12 +116,5 @@ const updateUserSession = async (
   }
 
   req.user = { id: foundUser.id, sessionId };
-
-  // clear cookies before resetting them
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
-
   UserService.setCookies(tokens, res);
-
-  next();
 };
