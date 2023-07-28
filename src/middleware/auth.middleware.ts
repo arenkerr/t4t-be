@@ -55,11 +55,9 @@ export const authMiddleware = async (
 
       // if refresh token is valid, update token cookies and user session
       if (foundUser) {
-        updateUserSession(foundUser, req, res);
+        updateUserSession(foundUser, req, res, next);
       }
     }
-
-    return next();
   } catch (err) {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
@@ -98,7 +96,8 @@ const validateRefreshTokenUser = async (
 const updateUserSession = async (
   foundUser: UserModel,
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   const tokens = UserService.createTokens(foundUser);
   const sessionId = await UserService.createSession(
@@ -117,4 +116,6 @@ const updateUserSession = async (
 
   req.user = { id: foundUser.id, sessionId };
   UserService.setCookies(tokens, res);
+
+  return next();
 };

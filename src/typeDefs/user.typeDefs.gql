@@ -1,14 +1,15 @@
 # import BaseError from 'error.typeDefs.gql'
 # import UnknownError from 'error.typeDefs.gql'
 # import InvalidCredentialsError from 'error.typeDefs.gql'
+# import isUser from 'directives.typeDefs.gql'
 
 scalar Date
 
 type User {
   id: ID!
   username: String!
-  password: String!
-  email: String!
+  password: String @isUser
+  email: String @isUser
   bio: String
   avatarUrl: String
   createdAt: Date!

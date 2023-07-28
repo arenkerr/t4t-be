@@ -72,7 +72,7 @@ export type QueryFindUserArgs = {
   id: Scalars['String'];
 };
 
-export type QueryUserResult = UnknownError | User;
+export type QueryUserResult = UnauthorizedError | UnknownError | User;
 
 export type UnauthorizedError = BaseError & {
   __typename?: 'UnauthorizedError';
@@ -89,9 +89,9 @@ export type User = {
   avatarUrl?: Maybe<Scalars['String']>;
   bio?: Maybe<Scalars['String']>;
   createdAt: Scalars['Date'];
-  email: Scalars['String'];
+  email?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
-  password: Scalars['String'];
+  password?: Maybe<Scalars['String']>;
   sessionId?: Maybe<Scalars['String']>;
   username: Scalars['String'];
 };
@@ -167,14 +167,14 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversUnionTypes = {
   CreateUserResult: ( UnknownError ) | ( User );
   LoginResult: ( InvalidCredentialsError ) | ( LoginData ) | ( UnknownError );
-  QueryUserResult: ( UnknownError ) | ( User );
+  QueryUserResult: ( UnauthorizedError ) | ( UnknownError ) | ( User );
 };
 
 /** Mapping of union parent types */
 export type ResolversUnionParentTypes = {
   CreateUserResult: ( UnknownError ) | ( User );
   LoginResult: ( InvalidCredentialsError ) | ( LoginData ) | ( UnknownError );
-  QueryUserResult: ( UnknownError ) | ( User );
+  QueryUserResult: ( UnauthorizedError ) | ( UnknownError ) | ( User );
 };
 
 /** Mapping between all available schema types and the resolvers types */
@@ -216,6 +216,10 @@ export type ResolversParentTypes = {
   UnknownError: UnknownError;
   User: User;
 };
+
+export type IsUserDirectiveArgs = { };
+
+export type IsUserDirectiveResolver<Result, Parent, ContextType = any, Args = IsUserDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type BaseErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['BaseError'] = ResolversParentTypes['BaseError']> = {
   __resolveType: TypeResolveFn<'InvalidCredentialsError' | 'NotFoundError' | 'UnauthorizedError' | 'UnknownError', ParentType, ContextType>;
@@ -262,7 +266,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 };
 
 export type QueryUserResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['QueryUserResult'] = ResolversParentTypes['QueryUserResult']> = {
-  __resolveType: TypeResolveFn<'UnknownError' | 'User', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<'UnauthorizedError' | 'UnknownError' | 'User', ParentType, ContextType>;
 };
 
 export type UnauthorizedErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['UnauthorizedError'] = ResolversParentTypes['UnauthorizedError']> = {
@@ -279,9 +283,9 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   avatarUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  password?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   sessionId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -303,3 +307,6 @@ export type Resolvers<ContextType = any> = {
   User?: UserResolvers<ContextType>;
 };
 
+export type DirectiveResolvers<ContextType = any> = {
+  isUser?: IsUserDirectiveResolver<any, any, ContextType>;
+};

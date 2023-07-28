@@ -1,8 +1,8 @@
 import { GraphQLSchema, defaultFieldResolver } from 'graphql';
 import { mapSchema, getDirective, MapperKind } from '@graphql-tools/utils';
 
-import createError from '../util/error.util.js';
 import { UNAUTHORIZED_ERROR } from '../constants/error.constants.js';
+import logger from '../util/logger.util.js';
 
 export const authDirectiveTransformer = (
   schema: GraphQLSchema,
@@ -16,6 +16,7 @@ export const authDirectiveTransformer = (
       if (authDirective) {
         typeDirectiveArgumentMaps[type.name] = authDirective;
       }
+
       return undefined;
     },
     [MapperKind.OBJECT_FIELD]: (fieldConfig, _, typeName) => {
@@ -30,11 +31,15 @@ export const authDirectiveTransformer = (
         // otherwise, return the original resolver
         // TODO: modify to match with the user's role type when roles are added
         fieldConfig.resolve = async function (source, args, context, info) {
-          if (!context.req.user) {
-            return createError(UNAUTHORIZED_ERROR);
-          }
+          try {
+            if (!context.req.user) {
+              throw Error(UNAUTHORIZED_ERROR);
+            }
 
-          return resolve(source, args, context, info);
+            return resolve(source, args, context, info);
+          } catch (err) {
+            logger.error(`authDirectiveTransformer - ${err}`);
+          }
         };
         return fieldConfig;
       }

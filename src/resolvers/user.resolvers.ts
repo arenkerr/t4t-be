@@ -22,7 +22,11 @@ const userResolvers: Resolvers = {
     findUser: (_, { id }: QueryFindUserArgs): Promise<QueryUserResult | null> =>
       UserService.getUser(id),
     findUsers: (): Promise<User[] | undefined> => UserService.getUsers(),
-    findLoggedInUser: (_, __, contextValue: { req: Request; res: Response }) =>
+    findLoggedInUser: (
+      _,
+      __,
+      contextValue: { req: Request; res: Response }
+    ): Promise<QueryUserResult | null> =>
       UserService.getUser(contextValue.req.user.id),
   },
   Mutation: {

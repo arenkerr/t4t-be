@@ -470,6 +470,11 @@
         "possibleTypes": [
           {
             "kind": "OBJECT",
+            "name": "UnauthorizedError",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
             "name": "UnknownError",
             "ofType": null
           },
@@ -606,13 +611,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -638,13 +639,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1644,6 +1641,16 @@
             "deprecationReason": null
           }
         ]
+      },
+      {
+        "name": "isUser",
+        "description": null,
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION",
+          "OBJECT"
+        ],
+        "args": []
       },
       {
         "name": "skip",
